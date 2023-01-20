@@ -29,35 +29,28 @@ export default function AccordionRooms() {
 
   return (
     <S.Container>
-      {MockRooms[indexDay].rooms.map((turma) => (
+      {MockRooms[indexDay].rooms.map(({ block, rooms }) => (
         <Accordion className="accordion">
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
             aria-controls="panel1a-content"
             id="panel1a-header"
           >
-            <Typography id="name-block">{turma.block}</Typography>
+            <Typography id="name-block">{block}</Typography>
           </AccordionSummary>
 
           <SelectDay />
           
           <AccordionDetails>
             <Typography className="rooms">
-              {turma.rooms.map((room) => (
-                <Button
-                  onClick={() => openRoom(room.blockId, room.number)}
-                  variant="contained"
-                >
-                  <S.Capacity>{room.capacity}</S.Capacity>
-                  <RenderRoomIcons tags={room.tags} />
-                  <S.RoomNumber>{room.number}</S.RoomNumber>
+              {rooms.map(({ number, capacity, tags, students }) => (
+                <Button onClick={() => openRoom(block, number)} variant="contained">
+                  <S.Capacity>{capacity}</S.Capacity>
+                  <RenderRoomIcons tags={tags} />
+                  <S.RoomNumber>{number}</S.RoomNumber>
                   <S.IndicatorGroup>
-                    {room.students?.map((student, index) => (
-                      <S.Indicator
-                        key={index}
-                        students={student}
-                        capacity={room.capacity}
-                      >
+                    {students?.map((student, index) => (
+                      <S.Indicator key={index} students={student} capacity={capacity}>
                         {student}
                       </S.Indicator>
                     ))}
@@ -91,8 +84,9 @@ export default function AccordionRooms() {
     );
   }
 
-  function openRoom(blockId, roomNumber) {
-    navigate(`/room/${blockId}/${roomNumber}`);
+  function openRoom(block, roomNumber) {
+    block = block.replace(".", "");
+    navigate(`/room/${block}/${roomNumber}`);
   }
 
   function incrementDay() {
